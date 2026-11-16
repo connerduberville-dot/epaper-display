@@ -1,0 +1,12 @@
+# arduino-cli sketch profile. Run from this folder:
+#   arduino-cli compile --profile xiao_c6 HelloPanel
+#   arduino-cli upload  --profile xiao_c6 -p COM6 HelloPanel
+profiles:
+  xiao_c6:
+    fqbn: esp32:esp32:XIAO_ESP32C6:PartitionScheme=huge_app
+    platforms:
+      - platform: esp32:esp32 (3.1.3)
+        platform_index_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+    libraries:
+      - ArduinoJson (7.3.1)
+default_profile: xiao_c6

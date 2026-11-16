@@ -1,0 +1,63 @@
+# Builds firmware/Display on every push to main that touches it, and publishes firmware.bin + manifest.json to
+# the release tagged "ota". The board checks that manifest every few minutes and installs newer builds.
+# Build number = this workflow's run number, so every published build is newer than the last.
+name: firmware
+
+on:
+  push:
+    branches: [main]
+    paths: ["firmware/Display/**", "tools/fw.py", ".github/workflows/firmware.yml"]
+  pull_request:
+    paths: ["firmware/Display/**", "tools/fw.py", ".github/workflows/firmware.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: firmware-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: arduino/setup-arduino-cli@v2
+
+      - name: Cache the ESP32 core and libraries
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.arduino15
+            ~/Arduino
+          key: arduino-${{ hashFiles('firmware/Display/sketch.yaml') }}
+
+      - name: Build
+        run: python3 -I tools/fw.py build --build ${{ github.run_number }} --repo ${{ github.repository }}
+
+      - name: Write manifest
+        run: |
+          python3 -I tools/fw.py manifest --build ${{ github.run_number }} \
+            --url "https://github.com/${{ github.repository }}/releases/download/ota/firmware.bin" --out dist
+          cp firmware/build/Display.ino.bin dist/firmware.bin
+
+      - name: Keep the build as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-${{ github.run_number }}
+          path: dist/
+
+      - name: Publish to the "ota" release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view ota >/dev/null 2>&1 || \
+            gh release create ota --title "OTA firmware" --latest=false \
+              --notes "The display pulls manifest.json from this release. Every firmware build replaces both files."
+          # Binary first, manifest last: a board that reads the new manifest always finds the matching binary.
+          gh release upload ota dist/firmware.bin --clobber
+          gh release upload ota dist/manifest.json --clobber
+          gh release edit ota --notes "Build ${{ github.run_number }} from ${GITHUB_SHA::7}. The display pulls manifest.json from this release."

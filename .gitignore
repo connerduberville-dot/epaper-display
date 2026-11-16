@@ -1,0 +1,10 @@
+firmware/build/
+firmware/Display/build_info.h
+hosttest/*.exe
+hosttest/*.pdb
+hosttest/*.pbm
+hosttest/*.png
+__pycache__/
+*.pyc
+dist/
+vendor/

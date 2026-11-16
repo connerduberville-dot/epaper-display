@@ -1,0 +1,12 @@
+# arduino-cli sketch profile. Build with tools/fw.py (it adds the custom partition size and build number):
+#   python -I tools/fw.py build
+# partitions.csv in this folder gives two 1.875 MB OTA slots; the FQBN's own partition menu is ignored.
+profiles:
+  xiao_c6:
+    fqbn: esp32:esp32:XIAO_ESP32C6
+    platforms:
+      - platform: esp32:esp32 (3.1.3)
+        platform_index_url: https://espressif.github.io/arduino-esp32/package_esp32_index.json
+    libraries:
+      - ArduinoJson (7.3.1)
+default_profile: xiao_c6

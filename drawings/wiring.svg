@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="960" viewBox="0 0 1400 960" font-family="DejaVu Sans, Arial, sans-serif">
+<rect width="1400" height="960" fill="#ffffff"/>
+<text x="40" y="52" font-size="28" font-weight="bold" fill="#111111">Fort Washington board — wiring</text>
+<text x="40" y="80" font-size="15" fill="#666666">Seeed XIAO ESP32-C6  ↔  Qiyun DESPI-C02 adapter  ↔  QYEG1085BNF86BF0 panel.  9 wires, 3.3 V logic only.</text>
+<rect x="120" y="170" width="200" height="330" rx="14" fill="#f3efe6" stroke="#111111" stroke-width="2"/>
+<rect x="190" y="156" width="60" height="28" rx="6" fill="#999" stroke="#111111"/>
+<text x="220" y="175" font-size="11" text-anchor="middle" fill="#ffffff">USB-C</text>
+<text x="220" y="335.0" font-size="15" text-anchor="middle" font-weight="bold" fill="#111111">XIAO</text>
+<text x="220" y="355.0" font-size="12" text-anchor="middle" fill="#666666">ESP32-C6 (top view)</text>
+<circle cx="120" cy="220" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="136" y="225" font-size="13" fill="#111111">D0</text>
+<circle cx="120" cy="260" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="136" y="265" font-size="13" fill="#111111">D1</text>
+<circle cx="120" cy="300" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="136" y="305" font-size="13" fill="#111111">D2</text>
+<circle cx="120" cy="340" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="136" y="345" font-size="13" fill="#111111">D3</text>
+<circle cx="120" cy="380" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="136" y="385" font-size="13" fill="#111111">D4</text>
+<circle cx="120" cy="420" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="136" y="425" font-size="13" fill="#111111">D5</text>
+<circle cx="120" cy="460" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="136" y="465" font-size="13" fill="#111111">D6</text>
+<circle cx="320" cy="220" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="304" y="225" font-size="13" text-anchor="end" fill="#111111">5V</text>
+<circle cx="320" cy="260" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="304" y="265" font-size="13" text-anchor="end" fill="#111111">GND</text>
+<circle cx="320" cy="300" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="304" y="305" font-size="13" text-anchor="end" fill="#111111">3V3</text>
+<circle cx="320" cy="340" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="304" y="345" font-size="13" text-anchor="end" fill="#111111">D10</text>
+<circle cx="320" cy="380" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="304" y="385" font-size="13" text-anchor="end" fill="#111111">D9</text>
+<circle cx="320" cy="420" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="304" y="425" font-size="13" text-anchor="end" fill="#111111">D8</text>
+<circle cx="320" cy="460" r="9" fill="#c9a227" stroke="#111111"/>
+<text x="304" y="465" font-size="13" text-anchor="end" fill="#111111">D7</text>
+<rect x="760" y="180" width="520" height="300" rx="10" fill="#f3efe6" stroke="#111111" stroke-width="2"/>
+<text x="1020.0" y="462" font-size="15" text-anchor="middle" font-weight="bold" fill="#111111">DESPI-C02 adapter  (53.3 × 31.2 mm, component side)</text>
+<rect x="752" y="212" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="225" font-size="13" fill="#111111">3.3V</text>
+<rect x="752" y="242" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="255" font-size="13" fill="#111111">GND</text>
+<rect x="752" y="272" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="285" font-size="13" fill="#111111">SDI</text>
+<rect x="752" y="302" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="315" font-size="13" fill="#111111">SCLK</text>
+<rect x="752" y="332" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="345" font-size="13" fill="#111111">CS</text>
+<rect x="752" y="362" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="375" font-size="13" fill="#111111">D/C</text>
+<rect x="752" y="392" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="405" font-size="13" fill="#111111">RES</text>
+<rect x="752" y="422" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="776" y="435" font-size="13" fill="#111111">BUSY</text>
+<text x="776" y="202" font-size="12" fill="#666666">P1 header (8 pins, 2.54 mm)</text>
+<rect x="1152" y="232" width="16" height="16" fill="#c9a227" stroke="#111111"/>
+<text x="1174" y="245" font-size="13" fill="#111111">J1 = CS2</text>
+<rect x="1240" y="270" width="22" height="150" fill="#ddd" stroke="#111111"/>
+<text x="1230" y="440" font-size="12" text-anchor="end" fill="#666666">24-pin FPC → panel</text>
+<rect x="910" y="220" width="70" height="22" fill="#eee" stroke="#111111"/>
+<text x="945" y="235" font-size="11" text-anchor="middle" fill="#111111">RESE  A | B</text>
+<text x="910" y="260" font-size="12" fill="#b00020" font-weight="bold">Set RESE jumper to A (0.47 Ω)</text>
+<text x="910" y="290" font-size="12" fill="#666666">BS: leave factory R1 (4-wire SPI)</text>
+<text x="910" y="320" font-size="12" fill="#666666">Boost circuit (L1 47 µH, Q1, D1–D3) on board</text>
+<path d="M329,300 H400.0 V220 H744" fill="none" stroke="#d33a2c" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M329,260 H437.5 V250 H744" fill="none" stroke="#222222" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M329,340 H475.0 V280 H744" fill="none" stroke="#2e7d32" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M329,420 H512.5 V310 H744" fill="none" stroke="#1565c0" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M111,260 H62 V548 H550.0 V340 H744" fill="none" stroke="#ef6c00" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M111,300 H55 V556 H587.5 V370 H744" fill="none" stroke="#6a1b9a" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M111,340 H48 V564 H625.0 V400 H744" fill="none" stroke="#00838f" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M111,380 H41 V572 H662.5 V430 H744" fill="none" stroke="#8d6e63" stroke-width="3.5" stroke-linejoin="round"/>
+<path d="M111,220 H34 V580 H700.0 V240 H1144" fill="none" stroke="#c2185b" stroke-width="3.5" stroke-linejoin="round"/>
+<text x="40" y="660" font-size="16" font-weight="bold" fill="#111111">Connections</text>
+<text x="40" y="688" font-size="12" font-weight="bold" fill="#666666">XIAO pin</text>
+<text x="150" y="688" font-size="12" font-weight="bold" fill="#666666">signal</text>
+<text x="270" y="688" font-size="12" font-weight="bold" fill="#666666">DESPI-C02</text>
+<text x="400" y="688" font-size="12" font-weight="bold" fill="#666666">color</text>
+<text x="510" y="688" font-size="12" font-weight="bold" fill="#666666">purpose</text>
+<text x="40" y="712" font-size="13" fill="#111111">3V3</text>
+<text x="150" y="712" font-size="13" fill="#111111">3V3</text>
+<text x="270" y="712" font-size="13" fill="#111111">3.3V</text>
+<rect x="400" y="701" width="40" height="13" fill="#d33a2c"/>
+<text x="510" y="712" font-size="13" fill="#111111">power</text>
+<text x="40" y="736" font-size="13" fill="#111111">GND</text>
+<text x="150" y="736" font-size="13" fill="#111111">GND</text>
+<text x="270" y="736" font-size="13" fill="#111111">GND</text>
+<rect x="400" y="725" width="40" height="13" fill="#222222"/>
+<text x="510" y="736" font-size="13" fill="#111111">ground</text>
+<text x="40" y="760" font-size="13" fill="#111111">D10</text>
+<text x="150" y="760" font-size="13" fill="#111111">MOSI</text>
+<text x="270" y="760" font-size="13" fill="#111111">SDI</text>
+<rect x="400" y="749" width="40" height="13" fill="#2e7d32"/>
+<text x="510" y="760" font-size="13" fill="#111111">SPI data</text>
+<text x="40" y="784" font-size="13" fill="#111111">D8</text>
+<text x="150" y="784" font-size="13" fill="#111111">SCK</text>
+<text x="270" y="784" font-size="13" fill="#111111">SCLK</text>
+<rect x="400" y="773" width="40" height="13" fill="#1565c0"/>
+<text x="510" y="784" font-size="13" fill="#111111">SPI clock</text>
+<text x="40" y="808" font-size="13" fill="#111111">D1</text>
+<text x="150" y="808" font-size="13" fill="#111111">CS</text>
+<text x="270" y="808" font-size="13" fill="#111111">CS</text>
+<rect x="400" y="797" width="40" height="13" fill="#ef6c00"/>
+<text x="510" y="808" font-size="13" fill="#111111">chip select, left half</text>
+<text x="40" y="832" font-size="13" fill="#111111">D2</text>
+<text x="150" y="832" font-size="13" fill="#111111">DC</text>
+<text x="270" y="832" font-size="13" fill="#111111">D/C</text>
+<rect x="400" y="821" width="40" height="13" fill="#6a1b9a"/>
+<text x="510" y="832" font-size="13" fill="#111111">data / command</text>
+<text x="40" y="856" font-size="13" fill="#111111">D3</text>
+<text x="150" y="856" font-size="13" fill="#111111">RST</text>
+<text x="270" y="856" font-size="13" fill="#111111">RES</text>
+<rect x="400" y="845" width="40" height="13" fill="#00838f"/>
+<text x="510" y="856" font-size="13" fill="#111111">reset</text>
+<text x="40" y="880" font-size="13" fill="#111111">D4</text>
+<text x="150" y="880" font-size="13" fill="#111111">BUSY</text>
+<text x="270" y="880" font-size="13" fill="#111111">BUSY</text>
+<rect x="400" y="869" width="40" height="13" fill="#8d6e63"/>
+<text x="510" y="880" font-size="13" fill="#111111">busy (low = busy)</text>
+<text x="40" y="904" font-size="13" fill="#111111">D0</text>
+<text x="150" y="904" font-size="13" fill="#111111">CS2</text>
+<text x="270" y="904" font-size="13" fill="#111111">CS2 (J1)</text>
+<rect x="400" y="893" width="40" height="13" fill="#c2185b"/>
+<text x="510" y="904" font-size="13" fill="#111111">chip select, right half — single pin by the FPC socket</text>
+<text x="760" y="560" font-size="16" font-weight="bold" fill="#111111">Notes</text>
+<text x="760" y="586" font-size="13" font-weight="normal" fill="#111111">• Everything is 3.3 V. Never connect 5V to the adapter.</text>
+<text x="760" y="612" font-size="13" font-weight="normal" fill="#111111">• Slimmest build: solder 28–30 AWG silicone wire straight to the XIAO pads</text>
+<text x="760" y="638" font-size="13" font-weight="normal" fill="#111111">   and the adapter's P5 holes (8 holes beside the white connector, same order).</text>
+<text x="760" y="664" font-size="13" font-weight="normal" fill="#111111">• D5 to GND at power-on forces Wi-Fi setup mode (optional button; else leave open).</text>
+<text x="760" y="690" font-size="13" font-weight="normal" fill="#111111">• Panel FPC: contacts face UP (display side up, '1' on the J1 end); top-contact socket.</text>
+<text x="760" y="716" font-size="13" font-weight="normal" fill="#111111">• Power: any USB-C phone charger into the XIAO. A right-angle cable keeps the case thin.</text>
+<text x="760" y="742" font-size="13" font-weight="normal" fill="#111111">• Keep wires short (under 15 cm); XIAO and adapter sit side by side behind the panel.</text>
+</svg>
