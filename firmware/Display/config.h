@@ -40,7 +40,7 @@
 #define DEFAULT_LON          -75.1652
 #define DEFAULT_WEATHER      true         // fetch the forecast from Open-Meteo (free, no API key)
 #define DEFAULT_METRIC       false        // false: deg F and mph
-#define DEFAULT_SCREEN       0            // 0 = home screen (landscape), 1 = SEPTA subway map (portrait)
+#define DEFAULT_SCREEN       1            // 0 = home screen (landscape), 1 = SEPTA subway map (portrait)
 #define DEFAULT_TURN_LEFT    false        // portrait: false = panel's left edge at the top, true = right edge
 
 // ---- Refresh policy (measured on this panel, see CLAUDE.md) ----
