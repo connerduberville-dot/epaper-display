@@ -7,6 +7,7 @@
 #include <cmath>
 #include "../firmware/Display/screen.h"
 #include "../firmware/Display/dashboard.h"
+#include "../firmware/Display/subway.h"
 using namespace septa;
 
 static void savePBM(const Framebuffer& fb, const char* path) {
@@ -62,6 +63,26 @@ int main() {
   t.tm_hour = 7; t.tm_min = 5; t.tm_isdst = -1; d.now = mktime(&t); renderDashboard(a, d); savePBM(a, "dash_morning.pbm");
   t.tm_hour = 13; t.tm_min = 20; t.tm_isdst = -1; d.now = mktime(&t); renderDashboard(a, d); savePBM(a, "dash_afternoon.pbm");
   d.wx = nullptr; d.wxStatus = "WEATHER: NO CONNECTION (-1)"; renderDashboard(a, d); savePBM(a, "dash_noweather.pbm");
+
+  // ---- subway map (portrait), both ways of hanging the display ----
+  {
+    struct tm x = {}; x.tm_year = 2026 - 1900; x.tm_mon = 10; x.tm_mday = 16; x.tm_hour = 12; x.tm_min = 58; x.tm_isdst = -1;
+    SubwayInfo si; si.now = mktime(&x); si.footerLeft = "BUILD 6"; si.footerRight = "10.0.0.4  UP TO DATE";
+    renderSubway(a, si); savePBM(a, "subway_cw.pbm");
+    si.turnLeft = true; renderSubway(b, si); savePBM(b, "subway_ccw.pbm");
+    si.turnLeft = false; si.bslOnly = true; renderSubway(a, si); savePBM(a, "subway_bsl.pbm");
+    { unsigned w = 0; for (int m = 0; m < 24 * 60 - 1; ++m) { x.tm_hour = m / 60; x.tm_min = m % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(a, si);
+      x.tm_hour = (m + 1) / 60; x.tm_min = (m + 1) % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(b, si); unsigned c = b.clearedPixels(a); if (c > w) w = c; }
+      printf("bsl map minute ticks: worst cleared %u px, limit 1500\n", w); }
+    si.bslOnly = false;
+    unsigned worstS = 0;
+    for (int m = 0; m < 24 * 60 - 1; ++m) {
+      x.tm_hour = m / 60; x.tm_min = m % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(a, si);
+      x.tm_hour = (m + 1) / 60; x.tm_min = (m + 1) % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(b, si);
+      unsigned c = b.clearedPixels(a); if (c > worstS) worstS = c;
+    }
+    printf("subway minute ticks: worst cleared %u px, limit 1500\n", worstS);
+  }
 
   // ---- the older built-in screens ----
   ScreenInfo s; s.time = "12:48"; s.ampm = "PM"; s.date = "WEDNESDAY, SEPTEMBER 30";
