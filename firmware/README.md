@@ -3,7 +3,12 @@
 The display shows, in order of priority:
 1. A **picture pushed** from the web page or `POST /api/fb`. It stays until "Back to clock" or a restart.
 2. A **content URL** frame, if one is set in Settings. The URL serves a raw 81,600-byte 1-bit frame and is re-fetched on an interval (ETag-aware).
-3. Otherwise a **clock + date** with a status footer: firmware build, IP, update status.
+3. Otherwise the **home screen** (`dashboard.h`): a greeting, the clock, the weather now, and a 24-hour
+   panorama with night shaded from the real sun position, the temperature curve, chance of rain, sunrise/sunset,
+   the moon phase and the daylight trend. A status footer shows the firmware build, IP and update status.
+   - The forecast comes from [Open-Meteo](https://open-meteo.com), which is free and needs no key. It's fetched once an hour, so the panorama's hourly shift and the new data arrive in one full refresh. Within an hour, every change is a partial refresh under the ghost limit.
+   - Name, latitude/longitude, units and weather on/off are under Settings, then Home screen.
+   - Host checks: `hosttest/render_display.cpp` renders previews and reports the worst minute tick; `hosttest/weather_parse_test.cpp` checks the parser.
 
 ## Updating the firmware
 

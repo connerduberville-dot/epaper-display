@@ -5,7 +5,9 @@
  * What it shows (in priority order):
  *   1. A picture pushed from the web page or POST /api/fb (stays until "Back to clock" or a restart)
  *   2. A frame fetched from the content URL, if one is set (Settings)
- *   3. Otherwise a clock + date, with firmware / network / update status in the footer
+ *   3. Otherwise the home screen (dashboard.h): greeting, clock, weather now, a 24-hour forecast panorama with
+ *      night shaded from the real sun position, moon phase and daylight trend; firmware / network / update
+ *      status in the footer. The forecast is from Open-Meteo (no API key), fetched once an hour.
  *
  * How it updates itself (see ota.h): checks a manifest on GitHub every N minutes and installs newer builds;
  * or upload a .bin at http://<board-ip>/ (Update tab) or with curl. New firmware that can't stay up on Wi-Fi
@@ -22,6 +24,8 @@
 #include "settings.h"
 #include "framebuffer.h"
 #include "screen.h"
+#include "dashboard.h"
+#include "weather.h"
 #include "epd_qyeg1085.h"
 #include "ota.h"
 #include "content.h"
@@ -51,6 +55,11 @@ static bool contentOk = false;
 static char contentStatus[64] = "off";
 static String contentEtag;
 static char lastMinute[8] = "";
+static Weather wx;                       // last good forecast
+static char wxStatus[48] = "not fetched yet";
+static int wxHourKey = -1;               // hour (day*24+hour) of the last good fetch
+static unsigned long wxTryMs = 0;        // last attempt, for retry spacing
+static bool wxTried = false;
 // ---------- display policy ----------
 static void commit(bool full) {
   Rect l = next.diffRect(shown, 0, HALF_W), r = next.diffRect(shown, HALF_W, W);
@@ -93,28 +102,44 @@ static const char* updateShort() {
   return "UPDATE CHECK FAILED";
 }
 
-static void renderClock(Framebuffer& fb) {
-  static const char* DAYS[] = {"SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"};
-  static const char* MONTHS[] = {"JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST",
-                                 "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
-  char hhmm[8] = "--:--", ampm[4] = "", date[40] = "WAITING FOR NETWORK TIME", left[64], right[96], notice[80] = "";
+// Forecast: fetched once an hour (at the first repaint of the hour), so the panorama's big hourly change and
+// the new data land together in one full refresh. After a failure, retry every 10 minutes.
+static void maybeFetchWeather() {
+  if (!cfg.weather) { wx.ok = false; snprintf(wxStatus, sizeof wxStatus, "off"); return; }
   struct tm t;
-  if (localTime(t)) {
-    int h = t.tm_hour % 12; if (!h) h = 12;
-    snprintf(hhmm, sizeof hhmm, "%d:%02d", h, t.tm_min);
-    snprintf(ampm, sizeof ampm, "%s", t.tm_hour < 12 ? "AM" : "PM");
-    snprintf(date, sizeof date, "%s, %s %d", DAYS[t.tm_wday], MONTHS[t.tm_mon], t.tm_mday);
-  }
+  if (!localTime(t) || WiFi.status() != WL_CONNECTED) return;
+  int key = t.tm_yday * 24 + t.tm_hour;
+  if (key == wxHourKey) return;
+  if (wxTried && millis() - wxTryMs < 10UL * 60000UL && strcmp(wxStatus, "ok")) return;   // failed recently
+  wxTried = true; wxTryMs = millis();
+  unsigned long t0 = millis();
+  const char* err = fetchWeather(cfg.lat, cfg.lon, cfg.metric, wx);
+  if (err) { snprintf(wxStatus, sizeof wxStatus, "%s", err); LOG("[wx] %s\n", err); return; }
+  wxHourKey = key; snprintf(wxStatus, sizeof wxStatus, "ok");
+  LOG("[wx] %.1f%c code %d, %d hours, %lu ms, heap %u\n", wx.temp, cfg.metric ? 'C' : 'F', wx.code, wx.n,
+      millis() - t0, (unsigned)ESP.getFreeHeap());
+}
+
+static void renderClock(Framebuffer& fb) {
+  char left[64], right[96], notice[80] = "", status[64] = "";
   snprintf(left, sizeof left, "FIRMWARE %s  BUILD %d", FW_VERSION, FW_BUILD);
   snprintf(right, sizeof right, "%s   EPAPER.LOCAL   %s",
            WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString().c_str() : "OFFLINE", updateShort());
   if (cfg.contentUrl[0] && !contentOk) snprintf(notice, sizeof notice, "CONTENT: %s", contentStatus);
-  ScreenInfo s; s.time = hhmm; s.ampm = ampm; s.date = date; s.footerLeft = left; s.footerRight = right; s.notice = notice;
-  s.hint = "OPEN HTTP://EPAPER.LOCAL ON YOUR PHONE TO SEND A PICTURE OR UPDATE";
-  renderScreen(fb, s);
+  DashInfo d;
+  d.now = time(nullptr); d.lat = cfg.lat; d.lon = cfg.lon; d.name = cfg.name;
+  // A forecast older than 6 hours is not worth showing.
+  bool fresh = wx.ok && cfg.weather && d.now - wx.fetched < 6 * 3600;
+  d.wx = fresh ? &wx : nullptr;
+  if (!cfg.weather) snprintf(status, sizeof status, "WEATHER IS OFF IN SETTINGS");
+  else if (wx.ok && !fresh) snprintf(status, sizeof status, "LAST FORECAST IS OVER 6 HOURS OLD");
+  else snprintf(status, sizeof status, "%s", wxStatus);
+  d.wxStatus = status;
+  d.footerLeft = left; d.footerRight = right; d.notice = notice;
+  renderDashboard(fb, d);
 }
 
-static void paintClock() { renderClock(next); commit(false); }
+static void paintClock() { maybeFetchWeather(); renderClock(next); commit(false); }
 
 // Fetch the content URL; on failure fall back to the clock with a notice.
 static void refreshContent() {
@@ -157,6 +182,7 @@ static void paintTestPattern() {
 static void applySettings() {
   WiFi.setSleep(cfg.wifiSleep);
   configTzTime(cfg.tz, "pool.ntp.org", "time.nist.gov");
+  wxHourKey = -1; wxTried = false; wx.ok = false;   // location or units may have changed: refetch
   if (mode != Mode::Pushed) resumeAuto();
 }
 
@@ -173,7 +199,7 @@ static void fillStatus(JsonObject o) {
   if (localTime(t)) strftime(ts, sizeof ts, "%Y-%m-%d %H:%M:%S", &t);
   o["time"] = ts; o["ssid"] = WiFi.SSID(); o["rssi"] = WiFi.RSSI(); o["ip"] = WiFi.localIP().toString();
   o["mode"] = mode == Mode::Pushed ? "pushed picture" : mode == Mode::Content ? (contentOk ? "content URL" : "clock (content failed)") : "clock";
-  o["content"] = contentStatus; o["partials"] = partialsSinceFull;
+  o["content"] = contentStatus; o["weather"] = wxStatus; o["partials"] = partialsSinceFull;
   JsonObject e = o["epd"].to<JsonObject>();
   e["kind"] = everPainted ? (lastEpdFull ? "full" : "partial") : "none"; e["ms"] = lastEpdMs; e["busyTimeout"] = epd.lastBusyTimedOut();
   o["uptime"] = millis() / 1000; o["heap"] = ESP.getFreeHeap(); o["minHeap"] = ESP.getMinFreeHeap(); o["reset"] = resetReason();

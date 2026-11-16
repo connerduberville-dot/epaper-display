@@ -20,12 +20,18 @@ struct Settings {
   uint16_t fullMaxAgeMin = FULL_REFRESH_MAX_AGE_MIN;
   bool     wifiSleep     = true;
   char     adminPass[33];   // empty = no password on the LAN endpoints that change things
+  char     name[24];        // home screen greeting
+  float    lat           = DEFAULT_LAT;
+  float    lon           = DEFAULT_LON;
+  bool     weather       = DEFAULT_WEATHER;
+  bool     metric        = DEFAULT_METRIC;
 
   Settings() {
     strlcpy(updateUrl, DEFAULT_UPDATE_URL, sizeof updateUrl);
     strlcpy(contentUrl, DEFAULT_CONTENT_URL, sizeof contentUrl);
     strlcpy(tz, DEFAULT_TZ, sizeof tz);
     adminPass[0] = 0;
+    strlcpy(name, DEFAULT_NAME, sizeof name);
   }
 
   void load() {
@@ -37,6 +43,9 @@ struct Settings {
     fullEveryN = p.getUChar("fulln", fullEveryN); fullMaxAgeMin = p.getUShort("fullage", fullMaxAgeMin);
     wifiSleep = p.getBool("wsleep", wifiSleep);
     getStr(p, "apw", adminPass, sizeof adminPass);
+    getStr(p, "name", name, sizeof name);
+    lat = p.getFloat("lat", lat); lon = p.getFloat("lon", lon);
+    weather = p.getBool("wx", weather); metric = p.getBool("metric", metric);
     p.end(); clamp();
   }
   void save() const {
@@ -45,6 +54,8 @@ struct Settings {
     p.putString("cnt", contentUrl); p.putUShort("cnts", contentSec); p.putString("tz", tz);
     p.putUChar("fulln", fullEveryN); p.putUShort("fullage", fullMaxAgeMin); p.putBool("wsleep", wifiSleep);
     p.putString("apw", adminPass);
+    p.putString("name", name); p.putFloat("lat", lat); p.putFloat("lon", lon);
+    p.putBool("wx", weather); p.putBool("metric", metric);
     p.end();
   }
   static void reset() { Preferences p; p.begin("disp", false); p.clear(); p.end(); }
@@ -55,6 +66,8 @@ struct Settings {
     if (fullEveryN < 1) fullEveryN = 1;
     if (fullMaxAgeMin < 5) fullMaxAgeMin = 5;  if (fullMaxAgeMin > 1440) fullMaxAgeMin = 1440;
     if (!tz[0]) strlcpy(tz, DEFAULT_TZ, sizeof tz);
+    if (!(lat >= -90 && lat <= 90)) lat = DEFAULT_LAT;      // also catches NaN
+    if (!(lon >= -180 && lon <= 180)) lon = DEFAULT_LON;
   }
 
   void toJson(JsonObject o) const {
@@ -62,6 +75,7 @@ struct Settings {
     o["contentUrl"] = contentUrl; o["contentSec"] = contentSec; o["tz"] = tz;
     o["fullEveryN"] = fullEveryN; o["fullMaxAgeMin"] = fullMaxAgeMin; o["wifiSleep"] = wifiSleep;
     o["hasAdminPass"] = adminPass[0] != 0;
+    o["name"] = name; o["lat"] = lat; o["lon"] = lon; o["weather"] = weather; o["metric"] = metric;
   }
   void fromJson(JsonObjectConst o) {
     if (o["updateUrl"].is<const char*>()) strlcpy(updateUrl, o["updateUrl"], sizeof updateUrl);
@@ -73,6 +87,9 @@ struct Settings {
     wifiSleep = o["wifiSleep"] | wifiSleep;
     // Only change the password when the field is present; "" clears it.
     if (o["adminPass"].is<const char*>()) strlcpy(adminPass, o["adminPass"], sizeof adminPass);
+    if (o["name"].is<const char*>()) strlcpy(name, o["name"], sizeof name);
+    lat = o["lat"] | lat; lon = o["lon"] | lon;
+    weather = o["weather"] | weather; metric = o["metric"] | metric;
     clamp();
   }
 
