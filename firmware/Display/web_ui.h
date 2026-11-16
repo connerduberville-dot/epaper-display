@@ -48,7 +48,7 @@ main{max-width:1100px;margin:0 auto;padding:16px}section{display:none}section.on
 dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px}dt{color:var(--mut)}dd{margin:0;overflow-wrap:anywhere}
 .ok{color:#1d8a3a}.bad{color:#c62828}.warn{color:#b26a00}
 label{display:block;margin:10px 0 4px;color:var(--mut);font-size:13px}
-input[type=number],input[type=text],input[type=password]{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
+input[type=number],input[type=text],input[type=password],select{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);font:inherit}
 input[type=checkbox]{transform:scale(1.3);margin-right:8px}
 button.b{padding:9px 16px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);font:inherit;cursor:pointer;margin:4px 6px 4px 0}
 button.b.p{background:var(--acc);border-color:var(--acc);color:#fff}button.b.d{border-color:#c62828;color:#c62828}
@@ -95,6 +95,9 @@ progress{width:100%;height:14px}
   <label>Update manifest URL (https)</label><input type=text name=updateUrl placeholder="https://github.com/OWNER/REPO/releases/download/ota/manifest.json">
   <div class=grid><div><label>Check every (minutes)</label><input type=number name=checkMin min=1 max=1440></div>
   <div><label style="margin-top:34px"><input type=checkbox name=autoUpdate> Install updates automatically</label></div></div>
+  <h2 style="margin-top:18px">Screen</h2>
+  <div class=grid><div><label>Show</label><select name=screen><option value=0>Home screen: clock, weather, sky (landscape)</option><option value=1>SEPTA subway map (portrait)</option></select></div>
+  <div><label>When hung vertically</label><select name=turnLeft><option value=0>Turned clockwise (panel's left edge at the top)</option><option value=1>Turned counter-clockwise (right edge at the top)</option></select></div></div>
   <h2 style="margin-top:18px">Home screen</h2>
   <p class=hint>Clock, weather and sky. The forecast comes from Open-Meteo (free, no key). The location is also used for sunrise and sunset.</p>
   <div class=grid><div><label>Your name (greeting)</label><input type=text name=name maxlength=23></div>

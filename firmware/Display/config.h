@@ -14,7 +14,7 @@
 #ifndef FW_BUILD
 #define FW_BUILD 0
 #endif
-#define FW_VERSION "1.1.0"
+#define FW_VERSION "1.2.0"
 
 // ---- Pins (XIAO ESP32-C6 silkscreen labels) -> DESPI-C02 adapter. Soldered; do not change. ----
 // D8 SCK -> SCLK, D10 MOSI -> SDI (hardware SPI, set in epd_qyeg1085.cpp)
@@ -40,6 +40,8 @@
 #define DEFAULT_LON          -75.1652
 #define DEFAULT_WEATHER      true         // fetch the forecast from Open-Meteo (free, no API key)
 #define DEFAULT_METRIC       false        // false: deg F and mph
+#define DEFAULT_SCREEN       0            // 0 = home screen (landscape), 1 = SEPTA subway map (portrait)
+#define DEFAULT_TURN_LEFT    false        // portrait: false = panel's left edge at the top, true = right edge
 
 // ---- Refresh policy (measured on this panel, see CLAUDE.md) ----
 #define FULL_REFRESH_EVERY_N       30     // partial updates between ghost-clearing full refreshes

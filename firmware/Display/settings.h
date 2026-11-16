@@ -25,6 +25,8 @@ struct Settings {
   float    lon           = DEFAULT_LON;
   bool     weather       = DEFAULT_WEATHER;
   bool     metric        = DEFAULT_METRIC;
+  uint8_t  screen        = DEFAULT_SCREEN;   // 0 home screen, 1 subway map
+  bool     turnLeft      = DEFAULT_TURN_LEFT;
 
   Settings() {
     strlcpy(updateUrl, DEFAULT_UPDATE_URL, sizeof updateUrl);
@@ -46,6 +48,7 @@ struct Settings {
     getStr(p, "name", name, sizeof name);
     lat = p.getFloat("lat", lat); lon = p.getFloat("lon", lon);
     weather = p.getBool("wx", weather); metric = p.getBool("metric", metric);
+    screen = p.getUChar("screen", screen); turnLeft = p.getBool("tleft", turnLeft);
     p.end(); clamp();
   }
   void save() const {
@@ -56,6 +59,7 @@ struct Settings {
     p.putString("apw", adminPass);
     p.putString("name", name); p.putFloat("lat", lat); p.putFloat("lon", lon);
     p.putBool("wx", weather); p.putBool("metric", metric);
+    p.putUChar("screen", screen); p.putBool("tleft", turnLeft);
     p.end();
   }
   static void reset() { Preferences p; p.begin("disp", false); p.clear(); p.end(); }
@@ -68,6 +72,7 @@ struct Settings {
     if (!tz[0]) strlcpy(tz, DEFAULT_TZ, sizeof tz);
     if (!(lat >= -90 && lat <= 90)) lat = DEFAULT_LAT;      // also catches NaN
     if (!(lon >= -180 && lon <= 180)) lon = DEFAULT_LON;
+    if (screen > 1) screen = 0;
   }
 
   void toJson(JsonObject o) const {
@@ -76,6 +81,7 @@ struct Settings {
     o["fullEveryN"] = fullEveryN; o["fullMaxAgeMin"] = fullMaxAgeMin; o["wifiSleep"] = wifiSleep;
     o["hasAdminPass"] = adminPass[0] != 0;
     o["name"] = name; o["lat"] = lat; o["lon"] = lon; o["weather"] = weather; o["metric"] = metric;
+    o["screen"] = screen; o["turnLeft"] = turnLeft ? 1 : 0;
   }
   void fromJson(JsonObjectConst o) {
     if (o["updateUrl"].is<const char*>()) strlcpy(updateUrl, o["updateUrl"], sizeof updateUrl);
@@ -90,10 +96,18 @@ struct Settings {
     if (o["name"].is<const char*>()) strlcpy(name, o["name"], sizeof name);
     lat = o["lat"] | lat; lon = o["lon"] | lon;
     weather = o["weather"] | weather; metric = o["metric"] | metric;
+    screen = num(o["screen"], screen); turnLeft = num(o["turnLeft"], turnLeft ? 1 : 0) != 0;
     clamp();
   }
 
  private:
+  // A form <select> sends its value as a string ("1"); accept numbers and numeric strings.
+  static int num(JsonVariantConst v, int dflt) {
+    if (v.is<int>()) return v.as<int>();
+    if (v.is<bool>()) return v.as<bool>() ? 1 : 0;
+    if (v.is<const char*>()) return atoi(v.as<const char*>());
+    return dflt;
+  }
   static void getStr(Preferences& p, const char* key, char* out, size_t cap) {
     if (!p.isKey(key)) return;                     // keep the default; avoids NVS "not found" log noise
     String s = p.getString(key, out); strlcpy(out, s.c_str(), cap);
