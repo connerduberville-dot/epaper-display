@@ -247,3 +247,15 @@ Repo: https://github.com/connerduberville-dot/epaper-display. A cloud session ha
 - Remove the rollback hook or `secureClient()`.
 - Put secrets in the repo: it is **public**.
 
+**State handed over from the PC session (Nov 16, 2026):**
+- The board is running build 3 (from GitHub), in clock mode. It was moved from PC USB to a wall USB adapter.
+- NVS settings:
+  - `updateUrl` = this repo's `ota` manifest, `autoUpdate` on, `checkMin` 10.
+  - No `contentUrl`.
+  - **No admin password**: anyone on the home Wi-Fi can change the board or upload firmware. Setting one is an easy improvement (Settings tab).
+- Verified on glass: LAN upload, GitHub install, automatic install, rollback confirmation, verified TLS, picture push.
+- Loose ends, all small:
+  - **Wi-Fi diagnostic scan:** in `connectWifi()` it returns -2 (scan failed) after a failed connect. It's only a log line, but the screen's "password rejected" vs "not found" wording relies on it.
+  - **GitHub Actions warnings:** Node 20 deprecation for `actions/checkout@v4`, `cache@v4`, `upload-artifact@v4`, `setup-arduino-cli@v2`. Bump them when newer majors exist. Also `ubuntu-latest` moves to Ubuntu 26.
+  - **The 60-s rollback window:** it only catches failures in the first minute. A build that crashes later stays installed. The board is crash-looping or unreachable if the footer build number never changes or the screen keeps restarting. Recovery then needs USB plus the PC session: `python -I tools/fw.py build` then `usb`.
+
