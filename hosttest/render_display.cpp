@@ -70,6 +70,7 @@ int main() {
     SubwayInfo si; si.now = mktime(&x); si.footerLeft = "BUILD 6"; si.footerRight = "10.0.0.4  UP TO DATE";
     renderSubway(a, si); savePBM(a, "subway_cw.pbm");
     si.turnLeft = true; renderSubway(b, si); savePBM(b, "subway_ccw.pbm");
+    si.turnLeft = false; si.bslOnly = true; renderSubway(a, si); savePBM(a, "subway_bsl.pbm");
     unsigned worstS = 0;
     for (int m = 0; m < 24 * 60 - 1; ++m) {
       x.tm_hour = m / 60; x.tm_min = m % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(a, si);

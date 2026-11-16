@@ -8,7 +8,8 @@
  *   3. Otherwise the home screen (dashboard.h): greeting, clock, weather now, a 24-hour forecast panorama with
  *      night shaded from the real sun position, moon phase and daylight trend; firmware / network / update
  *      status in the footer. The forecast is from Open-Meteo (no API key), fetched once an hour.
- *      Or (Settings > Screen) the SEPTA subway map for the display hung vertically (subway.h), with a clock.
+ *      Or (Settings > Screen) a SEPTA map for the display hung vertically (subway.h): all subway lines, or the
+ *      Broad Street Line strip map. Both with a clock.
  *
  * How it updates itself (see ota.h): checks a manifest on GitHub every N minutes and installs newer builds;
  * or upload a .bin at http://<board-ip>/ (Update tab) or with curl. New firmware that can't stay up on Wi-Fi
@@ -125,10 +126,10 @@ static void maybeFetchWeather() {
 
 static void renderClock(Framebuffer& fb) {
   char left[64], right[96], notice[80] = "", status[64] = "";
-  if (cfg.screen == 1) {   // subway map, portrait
+  if (cfg.screen == 1 || cfg.screen == 2) {   // subway maps, portrait
     snprintf(left, sizeof left, "BUILD %d", FW_BUILD);
     snprintf(right, sizeof right, "%s  %s", WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString().c_str() : "OFFLINE", updateShort());
-    SubwayInfo si; si.now = time(nullptr); si.turnLeft = cfg.turnLeft; si.footerLeft = left; si.footerRight = right;
+    SubwayInfo si; si.bslOnly = cfg.screen == 2; si.now = time(nullptr); si.turnLeft = cfg.turnLeft; si.footerLeft = left; si.footerRight = right;
     renderSubway(fb, si);
     return;
   }

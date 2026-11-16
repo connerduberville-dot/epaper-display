@@ -96,7 +96,7 @@ progress{width:100%;height:14px}
   <div class=grid><div><label>Check every (minutes)</label><input type=number name=checkMin min=1 max=1440></div>
   <div><label style="margin-top:34px"><input type=checkbox name=autoUpdate> Install updates automatically</label></div></div>
   <h2 style="margin-top:18px">Screen</h2>
-  <div class=grid><div><label>Show</label><select name=screen><option value=0>Home screen: clock, weather, sky (landscape)</option><option value=1>SEPTA subway map (portrait)</option></select></div>
+  <div class=grid><div><label>Show</label><select name=screen><option value=0>Home screen: clock, weather, sky (landscape)</option><option value=1>SEPTA subway map, all lines (portrait)</option><option value=2>Broad Street Line map (portrait)</option></select></div>
   <div><label>When hung vertically</label><select name=turnLeft><option value=0>Turned clockwise (panel's left edge at the top)</option><option value=1>Turned counter-clockwise (right edge at the top)</option></select></div></div>
   <h2 style="margin-top:18px">Home screen</h2>
   <p class=hint>Clock, weather and sky. The forecast comes from Open-Meteo (free, no key). The location is also used for sunrise and sunset.</p>

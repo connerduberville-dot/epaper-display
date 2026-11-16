@@ -1,6 +1,6 @@
-// Subway map screen, for the display hung vertically (portrait, 480 x 1360).
-// The map itself is a generated bitmap (subway_map.h, made by tools/subway_map/make_map.py from SEPTA's GTFS
-// data); this file unpacks it into the landscape framebuffer with the chosen rotation and draws the clock and the
+// Subway map screens, for the display hung vertically (portrait, 480 x 1360).
+// The maps are generated bitmaps (subway_map.h: all subway lines, make_map.py; subway_bsl.h: Broad Street Line strip
+// map, make_bsl.py; both from SEPTA's GTFS data in tools/subway_map/); this file unpacks it into the landscape framebuffer with the chosen rotation and draws the clock and the
 // status footer in the boxes the map leaves blank. Pure C++, so it also renders on the PC.
 //
 // Refresh: only the clock changes within an hour (a partial refresh well under the ghost limit).
@@ -9,6 +9,7 @@
 #include <time.h>
 #include "framebuffer.h"
 #include "subway_map.h"
+#include "subway_bsl.h"
 
 namespace septa {
 
@@ -48,6 +49,7 @@ struct Portrait {
 };
 
 struct SubwayInfo {
+  bool bslOnly = false;       // true: the Broad Street Line strip map (subway_bsl.h); false: the full subway map
   time_t now = 0;             // 0 = clock not set
   bool turnLeft = false;
   const char* footerLeft = "";
@@ -61,8 +63,10 @@ inline void renderSubway(Framebuffer& fb, const SubwayInfo& s) {
   Portrait p{fb, s.turnLeft};
   // Unpack the run-length-encoded map: (count, byte) pairs, 60 bytes per portrait row.
   uint32_t out = 0;
-  for (uint32_t i = 0; i + 1 < RLE_BYTES; i += 2) {
-    uint8_t n = pgm_read_byte(RLE + i), v = pgm_read_byte(RLE + i + 1);
+  const uint8_t* rle = s.bslOnly ? septa_bsl::RLE : RLE;
+  uint32_t rleBytes = s.bslOnly ? septa_bsl::RLE_BYTES : RLE_BYTES;
+  for (uint32_t i = 0; i + 1 < rleBytes; i += 2) {
+    uint8_t n = pgm_read_byte(rle + i), v = pgm_read_byte(rle + i + 1);
     for (uint8_t k = 0; k < n; ++k, ++out) {
       if (!v) continue;
       int py = out / (PW / 8), px = (out % (PW / 8)) * 8;

@@ -120,7 +120,7 @@
     "lon": -75.13676
    },
    {
-    "name": "Olney Transit Center & B3",
+    "name": "Olney Transit Center",
     "lat": 40.03907,
     "lon": -75.14475
    },
@@ -157,7 +157,7 @@
   ],
   "B3": [
    {
-    "name": "Olney Transit Center & B3",
+    "name": "Olney Transit Center",
     "lat": 40.03907,
     "lon": -75.14475
    },
@@ -4781,6 +4781,330 @@
   ],
   "Front-Girard": [
    "G1"
+  ]
+ },
+ "bsl_connections": {
+  "Fern Rock Transit Center": {
+   "bus": [
+    "28",
+    "57",
+    "70"
+   ],
+   "metro": [],
+   "rail": [
+    "Fern Rock Transit Center"
+   ],
+   "owl": true
+  },
+  "Olney Transit Center": {
+   "bus": [
+    "6",
+    "8",
+    "16",
+    "18",
+    "22",
+    "26",
+    "51",
+    "55"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Logan": {
+   "bus": [
+    "16",
+    "41"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Wyoming": {
+   "bus": [
+    "16",
+    "75"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Hunting Park": {
+   "bus": [
+    "1",
+    "16",
+    "82"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Erie": {
+   "bus": [
+    "16",
+    "23",
+    "53",
+    "56",
+    "71",
+    "81"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Broad-Allegheny": {
+   "bus": [
+    "4",
+    "16",
+    "60"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "North Philadelphia": {
+   "bus": [
+    "4",
+    "16",
+    "54"
+   ],
+   "metro": [],
+   "rail": [
+    "North Broad",
+    "North Philadelphia Amtrak"
+   ],
+   "owl": true
+  },
+  "Susquehanna-Dauphin": {
+   "bus": [
+    "4",
+    "16",
+    "39"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Cecil B. Moore": {
+   "bus": [
+    "3",
+    "4",
+    "16"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Broad-Girard": {
+   "bus": [
+    "4",
+    "16"
+   ],
+   "metro": [
+    "G1"
+   ],
+   "rail": [],
+   "owl": true
+  },
+  "Fairmount": {
+   "bus": [
+    "4",
+    "16",
+    "61"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Broad-Spring Garden": {
+   "bus": [
+    "4",
+    "16",
+    "43"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Race-Vine": {
+   "bus": [
+    "4",
+    "16",
+    "27"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "15th St/City Hall": {
+   "bus": [
+    "4",
+    "16",
+    "17",
+    "27",
+    "31",
+    "32",
+    "33",
+    "38",
+    "44",
+    "48",
+    "124",
+    "125"
+   ],
+   "metro": [
+    "L1",
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "T5"
+   ],
+   "rail": [
+    "Suburban Station"
+   ],
+   "owl": true
+  },
+  "Walnut-Locust": {
+   "bus": [
+    "4",
+    "9",
+    "12",
+    "21",
+    "27",
+    "32",
+    "42"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Lombard-South": {
+   "bus": [
+    "4",
+    "27",
+    "32",
+    "40"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Ellsworth-Federal": {
+   "bus": [
+    "4"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Tasker-Morris": {
+   "bus": [
+    "4",
+    "29"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Snyder": {
+   "bus": [
+    "4",
+    "37",
+    "79"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Oregon": {
+   "bus": [
+    "4",
+    "7",
+    "45",
+    "63",
+    "68"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "NRG Station": {
+   "bus": [
+    "4",
+    "45",
+    "68"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": true
+  },
+  "Chinatown": {
+   "bus": [
+    "47",
+    "61"
+   ],
+   "metro": [],
+   "rail": [],
+   "owl": false
+  },
+  "8th-Market": {
+   "bus": [
+    "17",
+    "33",
+    "38",
+    "44",
+    "47",
+    "48",
+    "61"
+   ],
+   "metro": [
+    "L1"
+   ],
+   "rail": [],
+   "owl": false
+  }
+ },
+ "patterns": {
+  "B1": [
+   [
+    "Fern Rock Transit Center",
+    "15th St/City Hall",
+    "Walnut-Locust",
+    "Lombard-South",
+    "Ellsworth-Federal",
+    "Tasker-Morris",
+    "Snyder",
+    "Oregon",
+    "NRG Station"
+   ],
+   4
+  ],
+  "B2": [
+   [
+    "Fern Rock Transit Center",
+    "Olney Transit Center",
+    "Erie",
+    "Broad-Girard",
+    "Broad-Spring Garden",
+    "Race-Vine",
+    "15th St/City Hall",
+    "Walnut-Locust",
+    "NRG Station"
+   ],
+   33
+  ],
+  "B3": [
+   [
+    "Fern Rock Transit Center",
+    "Olney Transit Center",
+    "Erie",
+    "North Philadelphia",
+    "Broad-Girard",
+    "Fairmount",
+    "Chinatown",
+    "8th-Market"
+   ],
+   54
   ]
  }
 }
