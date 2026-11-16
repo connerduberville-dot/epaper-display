@@ -40,7 +40,14 @@
 #define DEFAULT_LON          -75.1652
 #define DEFAULT_WEATHER      true         // fetch the forecast from Open-Meteo (free, no API key)
 #define DEFAULT_METRIC       false        // false: deg F and mph
-#define DEFAULT_SCREEN       2            // 0 = home screen (landscape), 1 = all subway lines, 2 = Broad Street Line (portrait)
+#define DEFAULT_SCREEN       3            // 0 = home screen, 1 = all subway lines, 2 = Broad Street Line (portrait),
+                                          // 3 = Fort Washington train board (landscape)
+// Train board (screen 3): SEPTA NextToArrive between these stations (SEPTA's spelling).
+#define TRAIN_ORIGIN         "Ft Washington"
+#define TRAIN_DEST           "Suburban Station"
+#define TRAIN_RESULTS        8
+#define TRAIN_POLL_MS        60000UL      // once a minute, like the original board
+#define TRAIN_STALE_MIN      15           // "FEED UNAVAILABLE" after this long without data
 #define DEFAULT_TURN_LEFT    false        // portrait: false = panel's left edge at the top, true = right edge
 
 // ---- Refresh policy (measured on this panel, see CLAUDE.md) ----

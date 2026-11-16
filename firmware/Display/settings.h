@@ -25,7 +25,7 @@ struct Settings {
   float    lon           = DEFAULT_LON;
   bool     weather       = DEFAULT_WEATHER;
   bool     metric        = DEFAULT_METRIC;
-  uint8_t  screen        = DEFAULT_SCREEN;   // 0 home screen, 1 subway map, 2 Broad Street Line map
+  uint8_t  screen        = DEFAULT_SCREEN;   // 0 home screen, 1 subway map, 2 Broad Street Line map, 3 train board
   bool     turnLeft      = DEFAULT_TURN_LEFT;
 
   Settings() {
@@ -72,7 +72,7 @@ struct Settings {
     if (!tz[0]) strlcpy(tz, DEFAULT_TZ, sizeof tz);
     if (!(lat >= -90 && lat <= 90)) lat = DEFAULT_LAT;      // also catches NaN
     if (!(lon >= -180 && lon <= 180)) lon = DEFAULT_LON;
-    if (screen > 2) screen = 0;
+    if (screen > 3) screen = 0;
   }
 
   void toJson(JsonObject o) const {

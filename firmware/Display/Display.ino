@@ -10,6 +10,8 @@
  *      status in the footer. The forecast is from Open-Meteo (no API key), fetched once an hour.
  *      Or (Settings > Screen) a SEPTA map for the display hung vertically (subway.h): all subway lines, or the
  *      Broad Street Line strip map. Both with a clock.
+ *      Or the Fort Washington train board (train_board.h, from reference_firmware/SeptaBoard): next trains to
+ *      Suburban Station from SEPTA NextToArrive, polled once a minute.
  *
  * How it updates itself (see ota.h): checks a manifest on GitHub every N minutes and installs newer builds;
  * or upload a .bin at http://<board-ip>/ (Update tab) or with curl. New firmware that can't stay up on Wi-Fi
@@ -28,6 +30,8 @@
 #include "screen.h"
 #include "dashboard.h"
 #include "subway.h"
+#include "train_board.h"
+#include "train_api.h"
 #include "weather.h"
 #include "epd_qyeg1085.h"
 #include "ota.h"
@@ -63,6 +67,11 @@ static char wxStatus[48] = "not fetched yet";
 static int wxHourKey = -1;               // hour (day*24+hour) of the last good fetch
 static unsigned long wxTryMs = 0;        // last attempt, for retry spacing
 static bool wxTried = false;
+static Train trains[TRAIN_RESULTS];      // train board: last good NextToArrive result
+static int trainCount = 0;
+static unsigned long trainTryMs = 0, trainGoodMs = 0;
+static bool trainTried = false;
+static char trainStatus[48] = "not fetched yet", trainUpdated[12] = "";
 // ---------- display policy ----------
 static void commit(bool full) {
   Rect l = next.diffRect(shown, 0, HALF_W), r = next.diffRect(shown, HALF_W, W);
@@ -124,8 +133,53 @@ static void maybeFetchWeather() {
       millis() - t0, (unsigned)ESP.getFreeHeap());
 }
 
+static void clockString(char* out, size_t n) {
+  struct tm t;
+  if (!localTime(t)) { snprintf(out, n, "--:--"); return; }
+  int h = t.tm_hour % 12; if (!h) h = 12;
+  snprintf(out, n, "%d:%02d %s", h, t.tm_min, t.tm_hour < 12 ? "AM" : "PM");
+}
+
+// Train board: poll SEPTA once a minute (the minute repaint calls this).
+static void maybeFetchTrains() {
+  if (cfg.screen != 3) return;
+  if (trainTried && millis() - trainTryMs < TRAIN_POLL_MS - 5000UL) return;
+  trainTried = true; trainTryMs = millis();
+  const char* err = nullptr;
+  static Train got[TRAIN_RESULTS];
+  int n = fetchDepartures(TRAIN_ORIGIN, TRAIN_DEST, got, TRAIN_RESULTS, err);
+  if (n >= 0) {
+    memcpy(trains, got, sizeof(Train) * n); trainCount = n; trainGoodMs = millis();
+    clockString(trainUpdated, sizeof trainUpdated);
+    snprintf(trainStatus, sizeof trainStatus, "ok, %d trains", n);
+  } else {
+    snprintf(trainStatus, sizeof trainStatus, "%s", err ? err : "error");
+  }
+  LOG("[trains] %s\n", trainStatus);
+}
+
+static void renderTrainBoard(Framebuffer& fb) {
+  static BoardData b;
+  static char footer[24];
+  b = BoardData();
+  struct tm t;
+  bool haveTime = localTime(t);
+  b.nowMin = haveTime ? t.tm_hour * 60 + t.tm_min : 0;
+  clockString(b.clock, sizeof b.clock);
+  snprintf(b.updated, sizeof b.updated, "%s", trainUpdated);
+  snprintf(footer, sizeof footer, "BUILD %d", FW_BUILD);
+  b.footerRight = footer;
+  bool stale = !trainGoodMs || millis() - trainGoodMs > TRAIN_STALE_MIN * 60000UL;
+  if (!haveTime) b.fault = "WAITING FOR NETWORK TIME";
+  else if (stale && trainTried) { b.fault = "FEED UNAVAILABLE"; b.faultDetail = trainStatus; }
+  else if (stale) b.fault = "CONNECTING TO SEPTA";
+  else b.n = pickUpcoming(trains, trainCount, b.nowMin, b.trains, 3);
+  renderV2(fb, b);
+}
+
 static void renderClock(Framebuffer& fb) {
   char left[64], right[96], notice[80] = "", status[64] = "";
+  if (cfg.screen == 3) { renderTrainBoard(fb); return; }
   if (cfg.screen == 1 || cfg.screen == 2) {   // subway maps, portrait
     snprintf(left, sizeof left, "BUILD %d", FW_BUILD);
     snprintf(right, sizeof right, "%s  %s", WiFi.status() == WL_CONNECTED ? WiFi.localIP().toString().c_str() : "OFFLINE", updateShort());
@@ -150,7 +204,7 @@ static void renderClock(Framebuffer& fb) {
   renderDashboard(fb, d);
 }
 
-static void paintClock() { maybeFetchWeather(); renderClock(next); commit(false); }
+static void paintClock() { maybeFetchWeather(); maybeFetchTrains(); renderClock(next); commit(false); }
 
 // Fetch the content URL; on failure fall back to the clock with a notice.
 static void refreshContent() {
@@ -194,6 +248,7 @@ static void applySettings() {
   WiFi.setSleep(cfg.wifiSleep);
   configTzTime(cfg.tz, "pool.ntp.org", "time.nist.gov");
   wxHourKey = -1; wxTried = false; wx.ok = false;   // location or units may have changed: refetch
+  trainTried = false;                                // the train board fetches as soon as it is shown
   if (mode != Mode::Pushed) resumeAuto();
 }
 
@@ -210,7 +265,7 @@ static void fillStatus(JsonObject o) {
   if (localTime(t)) strftime(ts, sizeof ts, "%Y-%m-%d %H:%M:%S", &t);
   o["time"] = ts; o["ssid"] = WiFi.SSID(); o["rssi"] = WiFi.RSSI(); o["ip"] = WiFi.localIP().toString();
   o["mode"] = mode == Mode::Pushed ? "pushed picture" : mode == Mode::Content ? (contentOk ? "content URL" : "clock (content failed)") : "clock";
-  o["content"] = contentStatus; o["weather"] = wxStatus; o["partials"] = partialsSinceFull;
+  o["content"] = contentStatus; o["weather"] = wxStatus; o["trains"] = trainStatus; o["partials"] = partialsSinceFull;
   JsonObject e = o["epd"].to<JsonObject>();
   e["kind"] = everPainted ? (lastEpdFull ? "full" : "partial") : "none"; e["ms"] = lastEpdMs; e["busyTimeout"] = epd.lastBusyTimedOut();
   o["uptime"] = millis() / 1000; o["heap"] = ESP.getFreeHeap(); o["minHeap"] = ESP.getMinFreeHeap(); o["reset"] = resetReason();

@@ -9,7 +9,8 @@ The display shows, in order of priority:
    - The forecast comes from [Open-Meteo](https://open-meteo.com), which is free and needs no key. It's fetched once an hour, so the panorama's hourly shift and the new data arrive in one full refresh. Within an hour, every change is a partial refresh under the ghost limit.
    - Name, latitude/longitude, units and weather on/off are under Settings, then Home screen.
    - Host checks: `hosttest/render_display.cpp` renders previews and reports the worst minute tick; `hosttest/weather_parse_test.cpp` checks the parser.
-4. Or, with Settings, then Screen, one of two **SEPTA maps** (`subway.h`) for hanging the display vertically, each with a clock:
+4. Or the **Fort Washington train board** (screen 3, the default since build 10). It's the board from `reference_firmware/SeptaBoard`, ported as a screen so OTA keeps working (`train_board.h`, `train_api.h`). It shows the next trains to Suburban Station from SEPTA NextToArrive, polled once a minute over verified HTTPS. The stations are `TRAIN_ORIGIN` and `TRAIN_DEST` in `config.h`.
+5. Or, with Settings, then Screen, one of two **SEPTA maps** (`subway.h`) for hanging the display vertically, each with a clock:
    - **Broad Street Line map** (the default): SEPTA's own BSL line map (Version 2.0) redrawn in black and white. It has:
      - the B1/B2/B3 strands, and black pills at transfer stations;
      - accessible stations and the reverse-direction marks;
