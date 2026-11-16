@@ -19,16 +19,15 @@ inline const char* fetchFrame(const char* url, Framebuffer& out, String& etag, b
   if (!https && strncmp(url, "http://", 7)) return "URL must start with http:// or https://";
 
   SecureClient sc; NetworkClient plain;
-  if (https) secureClient(sc);
+  secureClient(sc);
   HTTPClient http;
-  http.setFollowRedirects(HTTPC_FORCE_FOLLOW_REDIRECTS);
   http.setConnectTimeout(10000); http.setTimeout(15000); http.useHTTP10(true);
-  bool ok = https ? http.begin(sc, url) : http.begin(plain, url);
-  if (!ok) return "bad content URL";
-  const char* keys[] = {"ETag"};
-  http.collectHeaders(keys, 1);
-  if (etag.length()) http.addHeader("If-None-Match", etag);
-  int code = http.GET();
+  static const char* keys[] = {"ETag"};
+  int code = httpGetFollow(http, sc, plain, url, [&](HTTPClient& h) {
+    h.collectHeaders(keys, 1);
+    if (etag.length()) h.addHeader("If-None-Match", etag);
+  });
+  if (code < 0) { snprintf(err, sizeof err, "content connection failed (%d)", code); return err; }
   if (code == 304) { http.end(); *unchanged = true; return nullptr; }
   if (code != 200) { snprintf(err, sizeof err, "content HTTP %d", code); http.end(); return err; }
   int len = http.getSize();
