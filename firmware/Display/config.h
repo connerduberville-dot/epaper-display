@@ -14,7 +14,7 @@
 #ifndef FW_BUILD
 #define FW_BUILD 0
 #endif
-#define FW_VERSION "1.0.0"
+#define FW_VERSION "1.1.0"
 
 // ---- Pins (XIAO ESP32-C6 silkscreen labels) -> DESPI-C02 adapter. Soldered; do not change. ----
 // D8 SCK -> SCLK, D10 MOSI -> SDI (hardware SPI, set in epd_qyeg1085.cpp)
@@ -34,6 +34,12 @@
 #define DEFAULT_CONTENT_URL  ""           // optional: a raw 81,600-byte frame to show instead of the clock
 #define DEFAULT_CONTENT_SEC  300          // how often to re-fetch it
 #define DEFAULT_TZ           "EST5EDT,M3.2.0,M11.1.0"
+// Home screen (sky dashboard). Location is only used for the forecast and sunrise/sunset; change it in Settings.
+#define DEFAULT_NAME         "CONNER"     // greeting; empty = no name
+#define DEFAULT_LAT          39.9526      // Philadelphia city centre
+#define DEFAULT_LON          -75.1652
+#define DEFAULT_WEATHER      true         // fetch the forecast from Open-Meteo (free, no API key)
+#define DEFAULT_METRIC       false        // false: deg F and mph
 
 // ---- Refresh policy (measured on this panel, see CLAUDE.md) ----
 #define FULL_REFRESH_EVERY_N       30     // partial updates between ghost-clearing full refreshes

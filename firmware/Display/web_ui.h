@@ -95,8 +95,15 @@ progress{width:100%;height:14px}
   <label>Update manifest URL (https)</label><input type=text name=updateUrl placeholder="https://github.com/OWNER/REPO/releases/download/ota/manifest.json">
   <div class=grid><div><label>Check every (minutes)</label><input type=number name=checkMin min=1 max=1440></div>
   <div><label style="margin-top:34px"><input type=checkbox name=autoUpdate> Install updates automatically</label></div></div>
+  <h2 style="margin-top:18px">Home screen</h2>
+  <p class=hint>Clock, weather and sky. The forecast comes from Open-Meteo (free, no key). The location is also used for sunrise and sunset.</p>
+  <div class=grid><div><label>Your name (greeting)</label><input type=text name=name maxlength=23></div>
+  <div><label style="margin-top:34px"><input type=checkbox name=weather> Show the weather forecast</label></div></div>
+  <div class=grid><div><label>Latitude</label><input type=number name=lat step=any min=-90 max=90></div>
+  <div><label>Longitude</label><input type=number name=lon step=any min=-180 max=180></div></div>
+  <label><input type=checkbox name=metric> Metric units (&deg;C, km/h)</label>
   <h2 style="margin-top:18px">Content</h2>
-  <p class=hint>Optional. A URL serving a raw 81,600-byte frame (1 bit per pixel, 1 = black). Leave empty to show the clock.</p>
+  <p class=hint>Optional. A URL serving a raw 81,600-byte frame (1 bit per pixel, 1 = black). Leave empty to show the home screen.</p>
   <label>Content URL (http or https)</label><input type=text name=contentUrl>
   <div class=grid><div><label>Fetch every (seconds)</label><input type=number name=contentSec min=30 max=43200></div>
   <div><label>Time zone (POSIX TZ)</label><input type=text name=tz maxlength=47></div></div>
