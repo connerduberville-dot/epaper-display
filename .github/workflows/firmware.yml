@@ -1,5 +1,5 @@
 # Builds firmware/Display on every push to main that touches it, and publishes firmware.bin + manifest.json to
-# the release tagged "ota". The board checks that manifest every few minutes and installs newer builds.
+# the release tagged "ota" (firmware-<build>.bin + manifest.json). The board checks that manifest every few minutes and installs newer builds.
 # Build number = this workflow's run number, so every published build is newer than the last.
 name: firmware
 
@@ -40,8 +40,8 @@ jobs:
       - name: Write manifest
         run: |
           python3 -I tools/fw.py manifest --build ${{ github.run_number }} \
-            --url "https://github.com/${{ github.repository }}/releases/download/ota/firmware.bin" --out dist
-          cp firmware/build/Display.ino.bin dist/firmware.bin
+            --url "https://github.com/${{ github.repository }}/releases/download/ota/firmware-${{ github.run_number }}.bin" --out dist
+          cp firmware/build/Display.ino.bin dist/firmware-${{ github.run_number }}.bin
 
       - name: Keep the build as an artifact
         uses: actions/upload-artifact@v4
@@ -57,7 +57,10 @@ jobs:
           gh release view ota >/dev/null 2>&1 || \
             gh release create ota --title "OTA firmware" --latest=false \
               --notes "The display pulls manifest.json from this release. Every firmware build replaces both files."
-          # Binary first, manifest last: a board that reads the new manifest always finds the matching binary.
-          gh release upload ota dist/firmware.bin --clobber
+          # Each build's binary has its own name and is uploaded before the manifest, so whichever manifest a
+          # (possibly cached) request returns, the binary it names exists and matches its size and SHA-256.
+          gh release upload ota dist/firmware-${{ github.run_number }}.bin --clobber
           gh release upload ota dist/manifest.json --clobber
+          # Keep the last 5 binaries.
+          gh release view ota --json assets --jq '.assets[].name' | grep -E '^firmware(-[0-9]+)?\.bin$'             | sort -t- -k2 -n | head -n -5 | xargs -r -I{} gh release delete-asset ota {} --yes
           gh release edit ota --notes "Build ${{ github.run_number }} from ${GITHUB_SHA::7}. The display pulls manifest.json from this release."
