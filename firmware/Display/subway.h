@@ -84,10 +84,18 @@ inline void renderSubway(Framebuffer& fb, const SubwayInfo& s) {
     snprintf(ap, sizeof ap, "%s", lt.tm_hour < 12 ? "AM" : "PM");
     snprintf(date, sizeof date, "%s %s %d", DAYS[lt.tm_wday], MONTHS[lt.tm_mon], lt.tm_mday);
   }
-  int apw = Framebuffer::textWidth(ap, 1);
-  p.textRight(CLOCK_X1 - 4 - apw - 6, CLOCK_Y0 + 44, t, 3, true);   // 54 px digits
-  p.text(CLOCK_X1 - 4 - apw, CLOCK_Y0 + 44, ap, 1, true);
-  p.textRight(CLOCK_X1 - 4, CLOCK_Y0 + 76, date, 0, true);
+  if (s.bslOnly) {   // white, inside the black header bar
+    const int x1 = septa_bsl::CLOCK_X1, y0 = septa_bsl::CLOCK_Y0;
+    int apw = Framebuffer::textWidth(ap, 0);
+    p.textRight(x1 - 2 - apw - 5, y0 + 34, t, 2, false);   // 38 px digits
+    p.text(x1 - 2 - apw, y0 + 34, ap, 0, false);
+    p.textRight(x1 - 2, y0 + 56, date, 0, false);
+  } else {
+    int apw = Framebuffer::textWidth(ap, 1);
+    p.textRight(CLOCK_X1 - 4 - apw - 6, CLOCK_Y0 + 44, t, 3, true);   // 54 px digits
+    p.text(CLOCK_X1 - 4 - apw, CLOCK_Y0 + 44, ap, 1, true);
+    p.textRight(CLOCK_X1 - 4, CLOCK_Y0 + 76, date, 0, true);
+  }
   // Footer (BUILD n stays visible so updates can be confirmed at a glance).
   p.text(16, FOOTER_Y + 30, s.footerLeft, 0, true);
   p.textRight(PW - 16, FOOTER_Y + 30, s.footerRight, 0, true);

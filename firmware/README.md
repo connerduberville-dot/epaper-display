@@ -10,7 +10,12 @@ The display shows, in order of priority:
    - Name, latitude/longitude, units and weather on/off are under Settings, then Home screen.
    - Host checks: `hosttest/render_display.cpp` renders previews and reports the worst minute tick; `hosttest/weather_parse_test.cpp` checks the parser.
 4. Or, with Settings, then Screen, one of two **SEPTA maps** (`subway.h`) for hanging the display vertically, each with a clock:
-   - **Broad Street Line map** (the default): a line-map-style strip diagram of every B station. It has one strand per service (B1 local, B2 express, B3 Broad-Ridge Spur) with a ring where that service stops. Under each name it lists rail and trolley connections and the bus routes stopping within 150 m.
+   - **Broad Street Line map** (the default): SEPTA's own BSL line map (Version 2.0) redrawn in black and white. It has:
+     - the B1/B2/B3 strands, and black pills at transfer stations;
+     - accessible stations and the reverse-direction marks;
+     - bus routes beside each station (frequent routes outlined);
+     - Regional Rail, L, T, G and PATCO connections, and the special-event and limited-service notes;
+     - the clock in the header.
    - **All subway lines:** every Broad Street, Market-Frankford (L1) and trolley-tunnel (T1-T5) station, plus PATCO in Center City.
    - The map comes from SEPTA's official GTFS data. Rebuild with `tools/subway_map/extract.py`, then `make_bsl.py` and `make_map.py`. They write `subway_bsl.h` and `subway_map.h` and check for overlapping labels.
    - "When hung vertically" picks which way the panel is turned.

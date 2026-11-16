@@ -71,6 +71,10 @@ int main() {
     renderSubway(a, si); savePBM(a, "subway_cw.pbm");
     si.turnLeft = true; renderSubway(b, si); savePBM(b, "subway_ccw.pbm");
     si.turnLeft = false; si.bslOnly = true; renderSubway(a, si); savePBM(a, "subway_bsl.pbm");
+    { unsigned w = 0; for (int m = 0; m < 24 * 60 - 1; ++m) { x.tm_hour = m / 60; x.tm_min = m % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(a, si);
+      x.tm_hour = (m + 1) / 60; x.tm_min = (m + 1) % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(b, si); unsigned c = b.clearedPixels(a); if (c > w) w = c; }
+      printf("bsl map minute ticks: worst cleared %u px, limit 1500\n", w); }
+    si.bslOnly = false;
     unsigned worstS = 0;
     for (int m = 0; m < 24 * 60 - 1; ++m) {
       x.tm_hour = m / 60; x.tm_min = m % 60; x.tm_isdst = -1; si.now = mktime(&x); renderSubway(a, si);
