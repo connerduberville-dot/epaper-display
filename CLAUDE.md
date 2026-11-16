@@ -220,3 +220,30 @@ epd.lastRefreshMs(); epd.lastBusyTimedOut();          // diagnostics
 - **A big clock ghosts.** At 120-160 px, about a third to half of all minute ticks clear more than 1,500 px, which would force a full refresh. At 54 px the worst tick clears 682 px (`hosttest/clock_ticks.cpp`).
 - **TLS:** use the Mozilla bundle built into the core (`secureClient()` in `firmware/Display/ota.h`), not `setInsecure()`. Tested: GitHub OK, self-signed cert refused. Minimum free heap during HTTPS was ~79 KB.
   - `NetworkClientSecure::stop()` forgets the CA bundle ("SSL - No CA Chain is set"). Because of that, HTTPClient's built-in redirect following fails (-1) on GitHub release downloads, which redirect to `release-assets.githubusercontent.com`. Use `httpGetFollow()` in `ota.h`, which re-attaches the bundle on each hop.
+
+---
+
+## 8. Working from a cloud session (phone / claude.ai/code)
+
+Repo: https://github.com/connerduberville-dot/epaper-display. A cloud session has the repo, but **no USB, no COM6, no LAN access to the board, and no `vendor/` folder** (third-party docs, kept only on Conner's PC).
+
+**How a change reaches the glass:**
+1. Edit `firmware/Display/`. Most display work lives in `renderClock()` in `Display.ino`, in `screen.h`, or in a new renderer.
+2. Open a PR. CI builds it as a compile check, but it does not publish.
+3. Merge the PR to `main`. CI publishes `firmware-<run#>.bin` + `manifest.json` to the `ota` release.
+4. The board checks every 10 min, installs the newer build and reboots.
+   - If the new build can't stay on Wi-Fi for 60 s, it rolls back by itself.
+   - The footer shows `BUILD <n>`, so Conner can confirm with a glance or a photo.
+- A build that doesn't compile never reaches the board.
+- A build that compiles but crashes or loses Wi-Fi rolls back, **unless the crash only happens after the first 60 s**. Keep `Ota::health()`, the update check in `loop()`, and the web server running in every build: they are the only way back without a cable.
+
+**Checking work without the board:**
+- Render layouts on the host: `hosttest/render_display.cpp` (needs `ziglang` or any C++17 compiler) writes PBM files.
+- Compile like CI does: `python3 -I tools/fw.py build`, with `arduino-cli` and the esp32 core 3.1.3 from the sketch profile.
+- Respect the ghost rule (section 3), and keep both framebuffers static (no third 81.6 KB buffer).
+
+**Never:**
+- Change `partitions.csv`. OTA can't change it: a mismatch bricks updates until USB.
+- Remove the rollback hook or `secureClient()`.
+- Put secrets in the repo: it is **public**.
+
